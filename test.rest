@@ -1,0 +1,18 @@
+###
+GET http://localhost:1337/setup
+
+### GET /users/getUsers
+GET http://localhost:1337/users/getUsers
+
+###
+POST  http://localhost:1337/users/addUser
+Content-Type: application/json
+
+{
+  "name": "Mike",
+  "email": "testuser_1720965299446_55492@example.com",
+  "password": "123456987"
+}
+
+### DELETE /users/:email
+DELETE http://localhost:1337/users/testuser_1720965299446_55492@example.com
