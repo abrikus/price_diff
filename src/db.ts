@@ -1,4 +1,4 @@
-const { Pool } = require('pg');
+import { Pool } from 'pg';
 
 const {
   POSTGRESDB_USER,
@@ -11,7 +11,7 @@ const {
 
 const pool = new Pool({
   host: POSTGRESDB_HOST,
-  port: POSTGRESDB_DOCKER_PORT,
+  port: POSTGRESDB_DOCKER_PORT ? parseInt(POSTGRESDB_DOCKER_PORT) : undefined,
   user: POSTGRESDB_USER,
   password: POSTGRESDB_ROOT_PASSWORD,
   database: POSTGRESDB_DATABASE
@@ -41,4 +41,4 @@ if (NODE_ENV === 'local') {
   initDatabase();
 }
 
-module.exports = pool;
+export default pool;

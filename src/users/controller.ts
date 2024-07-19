@@ -1,18 +1,19 @@
-const pool = require('../db');
-const queries = require('./queries');
-const utils = require('../utils');
+import { Request, Response } from 'express';
+import pool from '../db';
+import queries from './queries';
+import utils from '../utils/index';
 
-const getUsers = async (req, res) => {
+const getUsers = async (req: Request, res: Response) => {
   try {
     const result = await pool.query(queries.getUsers);
     res.status(200).json(result.rows);
-  } catch (error) {
-    console.error('Error executing query', error.stack);
+  } catch (error: unknown) {
+    if (error instanceof Error) console.error('Error executing query', error.stack);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-const addUser = async (req, res) => {
+const addUser = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { name, email, password } = req.body;
 
@@ -35,14 +36,14 @@ const addUser = async (req, res) => {
     const hashPass = await utils.genPassword(password);
 
     await pool.query(queries.addUser, [name, email, hashPass]);
-    res.status(201).send({ message: 'User added successfully' })
+    return res.status(201).send({ message: 'User added successfully' })
   } catch (error) {
     console.error('Error adding user:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 
-const removeUser = async (req, res) => {
+const removeUser = async (req: Request, res: Response): Promise<Response> => {
   const { email } = req.params;
   
   if (!email || !/\S+@\S+\.\S+/.test(email) || email.length > 255) {
@@ -54,14 +55,14 @@ const removeUser = async (req, res) => {
     if (result.rowCount === 0) {
       return res.status(404).json({ message: 'User not found' });
     }
-    res.status(200).json({ message: 'User removed successfully' });
+    return res.status(200).json({ message: 'User removed successfully' });
   } catch (error) {
     console.error('Error deleting user:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
 
-module.exports = {
+export default {
   getUsers,
   addUser,
   removeUser,
